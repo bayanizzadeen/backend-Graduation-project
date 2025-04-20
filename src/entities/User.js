@@ -1,77 +1,76 @@
 const { EntitySchema } = require("typeorm");
 
-const User = new EntitySchema({
+module.exports = new EntitySchema({
   name: "User",
-  tableName: "user",
+  tableName: "users",
   columns: {
     id: {
       primary: true,
       type: "bigint",
       generated: true,
     },
-    userName: {
+    firstName: {
       type: "varchar",
-      name: "user_name",
       nullable: false,
     },
-    userImage: {
-      type: "jsonb",
-      name: "user_image",
-      nullable: false,
-    },
-    userPhoneNumber: {
+    lastName: {
       type: "varchar",
-      name: "user_phone_number",
       nullable: false,
     },
-    userEmail: {
+    email: {
       type: "varchar",
-      name: "user_email",
+      unique: true,
       nullable: false,
     },
-    userStreetAddress: {
+    password: {
       type: "varchar",
-      name: "user_street_address",
       nullable: false,
     },
-    userPass: {
+    phoneNumber: {
       type: "varchar",
-      name: "user_pass",
-      nullable: false,
-    },
-    userStatus: {
-      type: "varchar",
-      name: "user_status",
-      nullable: false,
-    },
-    userCity: {
-      type: "varchar",
-      name: "usercity",
-      nullable: false,
-    },
-    userCountry: {
-      type: "varchar",
-      name: "user Country",
-      nullable: false,
-    },
-    userCreditNumber: {
-      type: "decimal",
-      name: "user_credit_number",
-      precision: 8,
-      scale: 2,
-      nullable: false,
-    },
-    userZipCode: {
-      type: "varchar",
-      name: "user_zip_code",
       nullable: false,
     },
     role: {
-      type: "varchar",
-      nullable: false,
-      check: "role IN('')",
+      type: "enum",
+      enum: ["USER", "SELLER", "MANAGER", "ADMIN"],
+      default: "USER",
+    },
+    isActive: {
+      type: "boolean",
+      default: true,
+    },
+    createdAt: {
+      type: "timestamp",
+      default: () => "CURRENT_TIMESTAMP",
+    },
+    updatedAt: {
+      type: "timestamp",
+      default: () => "CURRENT_TIMESTAMP",
+      onUpdate: "CURRENT_TIMESTAMP",
+    },
+  },
+  relations: {
+    reviews: {
+      type: "one-to-many",
+      target: "Review",
+      inverseSide: "user",
+    },
+
+    cart: {
+      type: "one-to-one",
+      target: "Cart",
+      inverseSide: "user",
+    },
+
+    seller: {
+      type: "one-to-one",
+      target: "Seller",
+      inverseSide: "user",
+    },
+    manager: {
+      type: "one-to-one",
+      target: "Manager",
+      inverseSide: "user",
     },
   },
 });
-
-module.exports = User;
