@@ -1,5 +1,5 @@
-const Review = require("../entities/Review");
-const AppError = require("../utils/appError");
+const Review = require("../entities");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 // Create a new review

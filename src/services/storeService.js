@@ -1,5 +1,5 @@
 const { AppDataSource } = require("../config/database");
-const Store = require("../entities/Store");
+const Store = require("../entities");
 const AppError = require("../utils/AppError");
 
 const storeRepository = AppDataSource.getRepository(Store);

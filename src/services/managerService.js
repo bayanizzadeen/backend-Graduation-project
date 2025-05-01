@@ -1,6 +1,6 @@
 const { AppDataSource } = require("../config/database");
 const bcrypt = require("bcryptjs");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 const managerRepository = AppDataSource.getRepository("Manager");

@@ -1,5 +1,5 @@
-const CommentReply = require("../entities/CommentReply");
-const AppError = require("../utils/appError");
+const CommentReply = require("../entities");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 // Create a new comment reply
