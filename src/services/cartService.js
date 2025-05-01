@@ -1,6 +1,6 @@
 const Cart = require("../entities/Cart");
 const CartItem = require("../entities/CartItem");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 // Create a new cart

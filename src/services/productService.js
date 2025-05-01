@@ -1,5 +1,5 @@
 const { getRepository } = require("typeorm");
-const Product = require("../entities/Product");
+const Product = require("../entities");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 const { AppDataSource } = require("../config/database");

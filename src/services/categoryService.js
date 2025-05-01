@@ -1,18 +1,17 @@
-const { getRepository } = require("typeorm");
-const Category = require("../entities/Category");
+const { AppDataSource } = require("../config/database");
+const { Category } = require("../entities");
 const AppError = require("../utils/AppError");
-const catchAsync = require("../utils/catchAsync");
 
 class CategoryService {
-  getRepository() {
-    return getRepository(Category);
+  constructor() {
+    this.repository = AppDataSource.getRepository(Category);
   }
 
   // Create a new category
   async createCategory(categoryData) {
     try {
-      const category = this.getRepository().create(categoryData);
-      return await this.getRepository().save(category);
+      const category = this.repository.create(categoryData);
+      return await this.repository.save(category);
     } catch (error) {
       if (error.code === "23505") {
         throw new AppError("Category already exists", 400);
@@ -23,12 +22,12 @@ class CategoryService {
 
   // Get all categories
   async getAllCategories() {
-    return await this.getRepository().find();
+    return await this.repository.find();
   }
 
   // Get category by ID
   async getCategoryById(id) {
-    const category = await this.getRepository().findOne({ where: { id } });
+    const category = await this.repository.findOne({ where: { id } });
     if (!category) {
       throw new AppError("Category not found", 404);
     }
@@ -39,13 +38,13 @@ class CategoryService {
   async updateCategory(id, categoryData) {
     const category = await this.getCategoryById(id);
     Object.assign(category, categoryData);
-    return await this.getRepository().save(category);
+    return await this.repository.save(category);
   }
 
   // Delete category
   async deleteCategory(id) {
     const category = await this.getCategoryById(id);
-    await this.getRepository().remove(category);
+    await this.repository.remove(category);
     return { message: "Category deleted successfully" };
   }
 }
