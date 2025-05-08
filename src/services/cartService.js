@@ -1,106 +1,106 @@
-const Cart = require("../entities/Cart");
-const CartItem = require("../entities/CartItem");
+const { AppDataSource } = require("../config/database");
+const { Cart, CartItem } = require("../entities");
 const AppError = require("../utils/AppError");
-const catchAsync = require("../utils/catchAsync");
+
+// Repositories
+const cartRepository = AppDataSource.getRepository(Cart);
+const cartItemRepository = AppDataSource.getRepository(CartItem);
 
 // Create a new cart
-exports.createCart = catchAsync(async (cartData) => {
-  const cart = await Cart.create(cartData);
-  return cart;
-});
+exports.createCart = async (cartData) => {
+  const cart = cartRepository.create(cartData);
+  return await cartRepository.save(cart);
+};
 
 // Get all carts
-exports.getAllCarts = catchAsync(async () => {
-  const carts = await Cart.find();
-  return carts;
-});
+exports.getAllCarts = async () => {
+  return await cartRepository.find({ relations: ["items"] });
+};
 
 // Get cart by ID
-exports.getCart = catchAsync(async (id) => {
-  const cart = await Cart.findById(id);
+exports.getCart = async (id) => {
+  const cart = await cartRepository.findOne({
+    where: { id },
+    relations: ["items"],
+  });
   if (!cart) {
     throw new AppError("No cart found with that ID", 404);
   }
   return cart;
-});
+};
 
 // Update cart
-exports.updateCart = catchAsync(async (id, updateData) => {
-  const cart = await Cart.findByIdAndUpdate(id, updateData, {
-    new: true,
-    runValidators: true,
-  });
+exports.updateCart = async (id, updateData) => {
+  const cart = await cartRepository.findOne({ where: { id } });
   if (!cart) {
     throw new AppError("No cart found with that ID", 404);
   }
-  return cart;
-});
+  Object.assign(cart, updateData);
+  return await cartRepository.save(cart);
+};
 
 // Delete cart
-exports.deleteCart = catchAsync(async (id) => {
-  const cart = await Cart.findByIdAndDelete(id);
-  if (!cart) {
+exports.deleteCart = async (id) => {
+  const result = await cartRepository.delete(id);
+  if (result.affected === 0) {
     throw new AppError("No cart found with that ID", 404);
   }
-});
+};
 
 // Get cart items
-exports.getCartItems = catchAsync(async (cartId) => {
-  const items = await CartItem.find({ cartId });
-  return items;
-});
+exports.getCartItems = async (cartId) => {
+  return await cartItemRepository.find({ where: { cart: { id: cartId } } });
+};
 
 // Add item to cart
-exports.addCartItem = catchAsync(async (cartId, itemData) => {
-  const item = await CartItem.create({
-    ...itemData,
-    cartId,
-  });
-  return item;
-});
+exports.addCartItem = async (cartId, itemData) => {
+  const cart = await cartRepository.findOne({ where: { id: cartId } });
+  if (!cart) {
+    throw new AppError("Cart not found", 404);
+  }
+  const item = cartItemRepository.create({ ...itemData, cart });
+  return await cartItemRepository.save(item);
+};
 
 // Update cart item
-exports.updateCartItem = catchAsync(async (itemId, updateData) => {
-  const item = await CartItem.findByIdAndUpdate(itemId, updateData, {
-    new: true,
-    runValidators: true,
-  });
+exports.updateCartItem = async (itemId, updateData) => {
+  const item = await cartItemRepository.findOne({ where: { id: itemId } });
   if (!item) {
     throw new AppError("No cart item found with that ID", 404);
   }
-  return item;
-});
+  Object.assign(item, updateData);
+  return await cartItemRepository.save(item);
+};
 
 // Remove item from cart
-exports.removeCartItem = catchAsync(async (itemId) => {
-  const item = await CartItem.findByIdAndDelete(itemId);
-  if (!item) {
+exports.removeCartItem = async (itemId) => {
+  const result = await cartItemRepository.delete(itemId);
+  if (result.affected === 0) {
     throw new AppError("No cart item found with that ID", 404);
   }
-});
+};
 
 // Get user's cart
-exports.getUserCart = catchAsync(async (userId) => {
-  const cart = await Cart.findOne({ userId });
+exports.getUserCart = async (userId) => {
+  const cart = await cartRepository.findOne({
+    where: { user: { id: userId } },
+    relations: ["items"],
+  });
   if (!cart) {
     throw new AppError("No cart found for this user", 404);
   }
   return cart;
-});
+};
 
 // Checkout cart
-exports.checkoutCart = catchAsync(async (cartId) => {
-  const cart = await Cart.findById(cartId);
+exports.checkoutCart = async (cartId) => {
+  const cart = await cartRepository.findOne({
+    where: { id: cartId },
+    relations: ["items"],
+  });
   if (!cart) {
     throw new AppError("No cart found with that ID", 404);
   }
 
-  // Here you would typically:
-  // 1. Create an order
-  // 2. Update product quantities
-  // 3. Clear the cart
-  // 4. Return the order details
-
-  // For now, we'll just return a success message
   return { message: "Cart checked out successfully" };
-});
+};

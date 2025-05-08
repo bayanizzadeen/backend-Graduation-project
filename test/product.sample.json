@@ -1,0 +1,58 @@
+{
+  "Product1": {
+    "productName": "Smartphone",
+    "productImage": "smartphone.jpg",
+    "productStatus": "available",
+    "standardPrice": 499.99,
+    "offerPrice": 399.99,
+    "productDescription": "Latest model smartphone with 128GB storage.",
+    "productDate": "2025-05-01",
+    "productQuantity": 50,
+    "storeId": 1,
+    "categoryIds": [2, 5]
+  },
+  "Product2": {
+    "productName": "Dell Inspiron 15",
+    "productImage": "https://example.com/images/dell.jpg",
+    "productStatus": "AVAILABLE",
+    "standardPrice": 899.99,
+    "offerPrice": 799.99,
+    "productDescription": "15.6 inch FHD Laptop with Intel i7, 16GB RAM, 512GB SSD.",
+    "productDate": "2025-05-01",
+    "productQuantity": 10,
+    "storeId": 2
+  },
+  "Product3": {
+    "productName": "Sony WH-1000XM5",
+    "productImage": "https://example.com/images/sony-headphones.jpg",
+    "productStatus": "OUT_OF_STOCK",
+    "standardPrice": 349.99,
+    "offerPrice": 299.99,
+    "productDescription": "Noise Cancelling Wireless Headphones with 30-hour battery life.",
+    "productDate": "2025-03-10",
+    "productQuantity": 0,
+    "storeId": 3
+  },
+  "Product4": {
+    "productName": "Samsung Galaxy Watch 6",
+    "productImage": "https://example.com/images/galaxywatch.jpg",
+    "productStatus": "AVAILABLE",
+    "standardPrice": 299.99,
+    "offerPrice": 249.99,
+    "productDescription": "Fitness and health smartwatch with AMOLED display.",
+    "productDate": "2025-02-15",
+    "productQuantity": 15,
+    "storeId": 4
+  },
+  "Product5": {
+    "productName": "iPhone 14 Pro",
+    "productImage": "https://example.com/images/iphone14.jpg",
+    "productStatus": "AVAILABLE",
+    "standardPrice": 1299.0,
+    "offerPrice": 1199.0,
+    "productDescription": "Apple iPhone 14 Pro with 128GB storage and A16 Bionic chip.",
+    "productDate": "2025-04-25",
+    "productQuantity": 20,
+    "storeId": 2
+  }
+}

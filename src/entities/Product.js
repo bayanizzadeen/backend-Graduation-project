@@ -1,3 +1,5 @@
+// src/entities/Product.js
+
 const { EntitySchema } = require("typeorm");
 
 module.exports = new EntitySchema({
@@ -7,7 +9,7 @@ module.exports = new EntitySchema({
     id: {
       primary: true,
       type: "bigint",
-      generated: true,
+      generated: "increment",
     },
     productName: {
       type: "varchar",
@@ -27,16 +29,16 @@ module.exports = new EntitySchema({
     standardPrice: {
       type: "decimal",
       name: "standard_price",
-      precision: 8,
+      precision: 10,
       scale: 2,
       nullable: false,
     },
     offerPrice: {
       type: "decimal",
       name: "offer_price",
-      precision: 8,
+      precision: 10,
       scale: 2,
-      nullable: false,
+      nullable: true, // العرض ممكن يكون اختياري
     },
     productDescription: {
       type: "text",
@@ -51,18 +53,25 @@ module.exports = new EntitySchema({
     productQuantity: {
       type: "decimal",
       name: "product_quantity",
-      precision: 8,
+      precision: 10,
       scale: 2,
       nullable: false,
     },
-    storeId: {
-      type: "bigint",
-      name: "store_id",
-      nullable: false,
-    },
   },
+
   relations: {
-    categories: {
+    store: {
+      type: "many-to-one",
+      target: "Store",
+      joinColumn: {
+        name: "store_id",
+        referencedColumnName: "id",
+      },
+      nullable: false,
+      eager: true,
+    },
+    category: {
+      // تعديل من "categories" إلى "category"
       type: "many-to-many",
       target: "Category",
       joinTable: {
@@ -76,11 +85,13 @@ module.exports = new EntitySchema({
           referencedColumnName: "id",
         },
       },
+      eager: true,
     },
     comments: {
       type: "one-to-many",
       target: "Comment",
       inverseSide: "product",
+      cascade: true,
     },
   },
 });

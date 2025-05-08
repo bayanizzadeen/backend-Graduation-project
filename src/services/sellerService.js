@@ -1,7 +1,7 @@
-const Seller = require("../entities");
+const Seller = require("../entities/Seller");
 const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
-
+const { AppDataSource } = require("../config/database");
 // Create a new seller
 exports.createSeller = catchAsync(async (sellerData) => {
   const seller = await Seller.create(sellerData);
@@ -10,7 +10,8 @@ exports.createSeller = catchAsync(async (sellerData) => {
 
 // Get all sellers
 exports.getAllSellers = catchAsync(async () => {
-  const sellers = await Seller.find();
+  const sellerRepository = AppDataSource.getRepository(Seller); // الحصول على Repository للبائعين
+  const sellers = await sellerRepository.find(); // استرجاع جميع البائعين باستخدام find
   return sellers;
 });
 

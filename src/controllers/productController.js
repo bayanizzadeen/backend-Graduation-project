@@ -53,7 +53,11 @@ const AppError = require("../utils/AppError");
  *         description: Product created successfully
  */
 exports.createProduct = catchAsync(async (req, res, next) => {
-  const { categoryIds, ...productData } = req.body;
+  const { categoryIds, storeId, ...productData } = req.body;
+
+  // تمرير العلاقة مع الـ Store بشكل صحيح
+  productData.store = { id: storeId };
+
   const product = await productService.createProduct(productData);
 
   if (categoryIds && categoryIds.length > 0) {

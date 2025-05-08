@@ -20,15 +20,11 @@ require("dotenv").config();
 
 // Export the data source based on environment
 let dataSource;
-if (process.env.NODE_ENV === 'test') {
-  // Use test data source for tests
+if (process.env.NODE_ENV === "test") {
   dataSource = require("./config/database.test").TestDataSource;
 } else {
-  // Use regular data source for development/production
   dataSource = require("./config/database").AppDataSource;
 }
-
-// Export the data source for use in tests
 exports.dataSource = dataSource;
 
 const app = express();
@@ -44,16 +40,16 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use("/api/users", userRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/carts", cartRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/sellers", sellerRoutes);
-app.use("/api/managers", managerRoutes);
-app.use("/api/invoices", invoiceRoutes);
-app.use("/api/comments", commentRoutes);
-app.use("/api/comment-replies", commentReplyRoutes);
-app.use("/api/stores", storeRoutes);
+app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/carts", cartRoutes);
+app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/sellers", sellerRoutes);
+app.use("/api/v1/managers", managerRoutes);
+app.use("/api/v1/invoices", invoiceRoutes);
+app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/comment-replies", commentReplyRoutes);
+app.use("/api/v1/stores", storeRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
@@ -64,5 +60,7 @@ app.all("*", (req, res, next) => {
   error.status = 404;
   next(error);
 });
-
+// app.get("/", (req, res) => {
+//   res.send("Welcome to the API");
+// });
 module.exports = app;

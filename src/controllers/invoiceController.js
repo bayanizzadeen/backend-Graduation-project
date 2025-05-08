@@ -49,6 +49,11 @@ exports.createInvoice = catchAsync(async (req, res, next) => {
  */
 exports.getAllInvoices = catchAsync(async (req, res, next) => {
   const invoices = await invoiceService.getAllInvoices();
+
+  if (!Array.isArray(invoices)) {
+    return next(new AppError("Invoices data is not available", 500));
+  }
+
   res.status(200).json({
     status: "success",
     results: invoices.length,
@@ -103,6 +108,10 @@ exports.getInvoice = catchAsync(async (req, res, next) => {
  */
 exports.getInvoicesByUser = catchAsync(async (req, res, next) => {
   const invoices = await invoiceService.getInvoicesByUser(req.params.userId);
+  if (!Array.isArray(invoices)) {
+    return next(new AppError("Invoices data is not available", 500));
+  }
+
   res.status(200).json({
     status: "success",
     results: invoices.length,
@@ -130,6 +139,10 @@ exports.getInvoicesBySeller = catchAsync(async (req, res, next) => {
   const invoices = await invoiceService.getInvoicesBySeller(
     req.params.sellerId
   );
+  if (!Array.isArray(invoices)) {
+    return next(new AppError("Invoices data is not available", 500));
+  }
+
   res.status(200).json({
     status: "success",
     results: invoices.length,
@@ -157,6 +170,9 @@ exports.getInvoicesBySeller = catchAsync(async (req, res, next) => {
  */
 exports.getInvoiceByCart = catchAsync(async (req, res, next) => {
   const invoice = await invoiceService.getInvoiceByCart(req.params.cartId);
+  if (!invoice) {
+    return next(new AppError("No invoice found with that cart ID", 404));
+  }
   res.status(200).json({
     status: "success",
     data: invoice,
@@ -250,6 +266,10 @@ exports.deleteInvoice = catchAsync(async (req, res, next) => {
  */
 exports.getInvoicesByOrder = catchAsync(async (req, res, next) => {
   const invoices = await invoiceService.getInvoicesByOrder(req.params.orderId);
+  if (!Array.isArray(invoices)) {
+    return next(new AppError("Invoices data is not available", 500));
+  }
+
   res.status(200).json({
     status: "success",
     results: invoices.length,

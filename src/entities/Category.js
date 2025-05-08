@@ -29,19 +29,21 @@ const Category = new EntitySchema({
       nullable: false,
     },
     createdAt: {
-      type: "date",
+      type: "timestamp",
       name: "created_at",
       nullable: false,
+      default: () => "CURRENT_TIMESTAMP", // ✅ القيمة الافتراضية
     },
     time: {
       type: "time",
       nullable: false,
+      default: () => "CURRENT_TIME", // ✅ القيمة الافتراضية
     },
   },
   relations: {
     products: {
       type: "many-to-many",
-      target: "Product",
+      target: require("./Product"),
       joinTable: {
         name: "product_categories",
         joinColumn: {

@@ -9,7 +9,7 @@ module.exports = new EntitySchema({
       type: "bigint",
       generated: true,
     },
-    cartId: {
+    orderId: {
       type: "bigint",
       nullable: false,
     },
@@ -51,11 +51,11 @@ module.exports = new EntitySchema({
     },
   },
   relations: {
-    cart: {
+    order: {
       type: "many-to-one",
-      target: "Cart",
+      target: "Order",
       joinColumn: {
-        name: "cartId",
+        name: "orderId",
         referencedColumnName: "id",
       },
     },

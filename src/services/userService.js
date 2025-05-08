@@ -1,5 +1,5 @@
-const { AppDataSource } = require("../config/database"); // ← تأكد من المسار
-const { User } = require("../entities"); // تأكد أن هذا كائن entity
+const { AppDataSource } = require("../config/database");
+const { User } = require("../entities");
 const AppError = require("../utils/AppError");
 
 class UserService {

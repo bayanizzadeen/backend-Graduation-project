@@ -1,18 +1,41 @@
-const { getRepository } = require("typeorm");
-const Product = require("../entities");
-const AppError = require("../utils/AppError");
-const catchAsync = require("../utils/catchAsync");
+// src/services/productService.js
+
 const { AppDataSource } = require("../config/database");
+const Product = require("../entities/Product");
 const Category = require("../entities/Category");
+const AppError = require("../utils/AppError");
 
 class ProductService {
   getRepository() {
-    return getRepository(Product);
+    return AppDataSource.getRepository(Product);
   }
 
-  // Create a new product
+  async getAllProducts() {
+    return await this.getRepository().find({
+      relations: ["category", "store", "comments"], // تعديل من "categories" إلى "category"
+    });
+  }
+
+  async getProductById(id) {
+    const product = await this.getRepository().findOne({
+      where: { id },
+      relations: ["category", "store", "comments"], // تعديل من "categories" إلى "category"
+    });
+
+    if (!product) {
+      throw new AppError("Product not found", 404);
+    }
+
+    return product;
+  }
+
   async createProduct(productData) {
     try {
+      if (productData.storeId) {
+        productData.store = { id: productData.storeId };
+        delete productData.storeId; // إزالة storeId لتجنب التضارب
+      }
+
       const product = this.getRepository().create(productData);
       return await this.getRepository().save(product);
     } catch (error) {
@@ -23,81 +46,54 @@ class ProductService {
     }
   }
 
-  // Get all products
-  async getAllProducts() {
-    return await this.getRepository().find({
-      relations: ["categories"],
-    });
-  }
-
-  // Get product by ID
-  async getProductById(id) {
-    const product = await this.getRepository().findOne({
-      where: { id },
-      relations: ["categories"],
-    });
-    if (!product) {
-      throw new AppError("Product not found", 404);
-    }
-    return product;
-  }
-
-  // Update product
   async updateProduct(id, productData) {
     const product = await this.getProductById(id);
-    if (!product) {
-      throw new AppError("Product not found", 404);
+
+    if (productData.storeId) {
+      product.store = { id: productData.storeId };
+      delete productData.storeId;
     }
+
     Object.assign(product, productData);
     return await this.getRepository().save(product);
   }
 
-  // Delete product
   async deleteProduct(id) {
-    const result = await this.getRepository().delete(id);
-    if (result.affected === 0) {
-      throw new AppError("Product not found", 404);
-    }
+    const product = await this.getProductById(id);
+    await this.getRepository().remove(product);
+    return { message: "Product deleted successfully" };
   }
 
-  // Get products by store ID
-  async getProductsByStoreId(storeId) {
-    return await this.getRepository().find({ where: { storeId } });
-  }
-
-  // Category relationship methods
   async addCategoryToProduct(productId, categoryId) {
-    const product = await this.getRepository().findOne({
-      where: { id: productId },
-      relations: ["categories"],
-    });
-    if (!product) {
-      throw new AppError("Product not found", 404);
-    }
+    const product = await this.getProductById(productId);
+    const categoryRepo = AppDataSource.getRepository(Category);
+    const category = await categoryRepo.findOneBy({ id: categoryId });
 
-    const category = await AppDataSource.getRepository(Category).findOne({
-      where: { id: categoryId },
-    });
     if (!category) {
       throw new AppError("Category not found", 404);
     }
 
-    product.categories = [...product.categories, category];
-    return await this.getRepository().save(product);
+    if (!product.category) {
+      // تعديل من "categories" إلى "category"
+      product.category = [];
+    }
+
+    const alreadyExists = product.category.some(
+      (cat) => cat.id === category.id
+    );
+    if (!alreadyExists) {
+      product.category.push(category);
+      return await this.getRepository().save(product);
+    }
+
+    return product; // التصنيف موجود مسبقًا
   }
 
   async removeCategoryFromProduct(productId, categoryId) {
-    const product = await this.getRepository().findOne({
-      where: { id: productId },
-      relations: ["categories"],
-    });
-    if (!product) {
-      throw new AppError("Product not found", 404);
-    }
+    const product = await this.getProductById(productId);
 
-    product.categories = product.categories.filter(
-      (category) => category.id !== categoryId
-    );
+    product.category = product.category.filter((cat) => cat.id !== categoryId);
+
     return await this.getRepository().save(product);
   }
 }
