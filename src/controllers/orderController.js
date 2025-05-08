@@ -76,12 +76,19 @@ exports.createOrder = catchAsync(async (req, res, next) => {
  */
 exports.getAllOrders = catchAsync(async (req, res, next) => {
   const orders = await orderService.getAllOrders();
+
+  if (!Array.isArray(orders)) {
+    return next(new AppError("Orders data is not available", 500));
+  }
+
+  if (!orders || orders.length === 0) {
+    return res.status(200).json({ message: "No orders found", data: [] });
+  }
+
   res.status(200).json({
     status: "success",
     results: orders.length,
-    data: {
-      orders,
-    },
+    data: orders,
   });
 });
 
@@ -131,6 +138,7 @@ exports.getOrder = catchAsync(async (req, res, next) => {
  */
 exports.getOrdersByUser = catchAsync(async (req, res, next) => {
   const orders = await orderService.getOrdersByUser(req.params.userId);
+
   res.status(200).json({
     status: "success",
     results: orders.length,

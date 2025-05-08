@@ -1,5 +1,5 @@
 const managerService = require("../services/managerService");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 /**
@@ -54,7 +54,14 @@ exports.createManager = catchAsync(async (req, res, next) => {
  *         description: List of all managers
  */
 exports.getAllManagers = catchAsync(async (req, res, next) => {
-  const managers = await managerService.getAllManagers();
+  const managers = (await managerService.getAllManagers()) || [];
+
+  if (!Array.isArray(managers)) {
+    return next(
+      new AppError("Unexpected error: managers is not an array", 500)
+    );
+  }
+
   res.status(200).json({
     status: "success",
     results: managers.length,

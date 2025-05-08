@@ -1,0 +1,32 @@
+[
+  {
+    "categoryName": "Electronics",
+    "categoryImage": "https://example.com/images/electronics.jpg",
+    "categoryTopic": "Devices, gadgets, and digital products",
+    "status": "ACTIVE"
+  },
+  {
+    "categoryName": "Fashion",
+    "categoryImage": "https://example.com/images/fashion.jpg",
+    "categoryTopic": "Clothing and accessories for men and women",
+    "status": "ACTIVE"
+  },
+  {
+    "categoryName": "Books",
+    "categoryImage": "https://example.com/images/books.jpg",
+    "categoryTopic": "Fiction, non-fiction, and academic books",
+    "status": "ACTIVE"
+  },
+  {
+    "categoryName": "Home Appliances",
+    "categoryImage": "https://example.com/images/home.jpg",
+    "categoryTopic": "Kitchen and household electrical appliances",
+    "status": "ACTIVE"
+  },
+  {
+    "categoryName": "Toys",
+    "categoryImage": "https://example.com/images/toys.jpg",
+    "categoryTopic": "Games and toys for children",
+    "status": "INACTIVE"
+  }
+]

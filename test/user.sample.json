@@ -1,0 +1,42 @@
+{
+  "User1SS": {
+    "firstName": "Bayan",
+    "lastName": "Ahmad",
+    "email": "bayan@example.com",
+    "password": "string@AB",
+    "phoneNumber": "0569433487",
+    "role": "SELLER"
+  },
+  "User2SS": {
+    "firstName": "hala",
+    "lastName": "fadi",
+    "email": "hala@example.com",
+    "password": "string@AB1",
+    "phoneNumber": "0569433489",
+    "role": "SELLER"
+  },
+  "User3MM": {
+    "firstName": "Nour",
+    "lastName": "Khaled",
+    "email": "nour.manager@example.com",
+    "password": "Manager@456",
+    "phoneNumber": "0569876543",
+    "role": "MANAGER"
+  },
+  "User4BB": {
+    "firstName": "Layan",
+    "lastName": "Tariq",
+    "email": "layan.buyer@example.com",
+    "password": "Buyer@123",
+    "phoneNumber": "0591122334",
+    "role": "USER"
+  },
+  "User5BB": {
+    "firstName": "sama",
+    "lastName": "Tariq",
+    "email": "sama.buyer@example.com",
+    "password": "Buyer@123",
+    "phoneNumber": "0591122334",
+    "role": "USER"
+  }
+}

@@ -1,5 +1,5 @@
 const sellerService = require("../services/sellerService");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/catchAsync");
 
 /**
@@ -51,8 +51,8 @@ exports.getAllSellers = catchAsync(async (req, res, next) => {
   const sellers = await sellerService.getAllSellers();
   res.status(200).json({
     status: "success",
-    results: sellers.length,
-    data: sellers,
+    results: sellers ? sellers.length : 0,
+    data: sellers || [],
   });
 });
 

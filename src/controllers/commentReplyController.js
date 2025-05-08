@@ -1,6 +1,6 @@
 const commentReplyService = require("../services/commentReplyService");
 const catchAsync = require("../utils/catchAsync");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 
 /**
  * @swagger
@@ -46,10 +46,11 @@ exports.createCommentReply = catchAsync(async (req, res) => {
  */
 exports.getAllCommentReplies = catchAsync(async (req, res) => {
   const replies = await commentReplyService.getAllCommentReplies();
+
   res.status(200).json({
     status: "success",
-    results: replies.length,
-    data: replies,
+    results: Array.isArray(replies) ? replies.length : 0,
+    data: replies || [],
   });
 });
 

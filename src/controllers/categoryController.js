@@ -52,7 +52,9 @@ exports.createCategory = catchAsync(async (req, res, next) => {
  *         description: List of categories
  */
 exports.getAllCategories = catchAsync(async (req, res, next) => {
+  console.log("Getting all categories...");
   const categories = await categoryService.getAllCategories();
+  console.log("Categories returned:", categories);
   res.status(200).json({
     status: "success",
     results: categories.length,
@@ -127,17 +129,18 @@ exports.getCategory = catchAsync(async (req, res, next) => {
  *         description: Category not found
  */
 exports.updateCategory = catchAsync(async (req, res, next) => {
-  const category = await categoryService.updateCategory(
-    req.params.id,
-    req.body
-  );
+  const category = await categoryService.getCategoryById(req.params.id);
   if (!category) {
     return next(new AppError("No category found with that ID", 404));
   }
+  const updatedCategory = await categoryService.updateCategory(
+    req.params.id,
+    req.body
+  );
   res.status(200).json({
     status: "success",
     data: {
-      category,
+      category: updatedCategory,
     },
   });
 });
@@ -161,6 +164,10 @@ exports.updateCategory = catchAsync(async (req, res, next) => {
  *         description: Category not found
  */
 exports.deleteCategory = catchAsync(async (req, res, next) => {
+  const category = await categoryService.getCategoryById(req.params.id);
+  if (!category) {
+    return next(new AppError("No category found with that ID", 404));
+  }
   await categoryService.deleteCategory(req.params.id);
   res.status(204).json({
     status: "success",

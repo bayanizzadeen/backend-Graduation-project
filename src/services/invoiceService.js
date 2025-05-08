@@ -1,26 +1,25 @@
 const { AppDataSource } = require("../config/database");
 const AppError = require("../utils/AppError");
-const catchAsync = require("../utils/catchAsync");
 const { Invoice } = require("../entities");
 
 const invoiceRepository = AppDataSource.getRepository(Invoice);
-const cartRepository = AppDataSource.getRepository("Cart");
 
 // Create a new invoice
-exports.createInvoice = catchAsync(async (invoiceData) => {
+exports.createInvoice = async (invoiceData) => {
   const invoice = invoiceRepository.create(invoiceData);
   return await invoiceRepository.save(invoice);
-});
+};
 
 // Get all invoices
-exports.getAllInvoices = catchAsync(async () => {
-  return await invoiceRepository.find({
+exports.getAllInvoices = async () => {
+  const invoices = await invoiceRepository.find({
     relations: ["user", "seller", "order"],
   });
-});
+  return invoices || []; // ✅ ضمان أن ترجع مصفوفة
+};
 
 // Get invoice by ID
-exports.getInvoiceById = catchAsync(async (id) => {
+exports.getInvoiceById = async (id) => {
   const invoice = await invoiceRepository.findOne({
     where: { id },
     relations: ["user", "seller", "order"],
@@ -31,13 +30,11 @@ exports.getInvoiceById = catchAsync(async (id) => {
   }
 
   return invoice;
-});
+};
 
 // Update invoice
-exports.updateInvoice = catchAsync(async (id, updateData) => {
-  const invoice = await invoiceRepository.findOne({
-    where: { id },
-  });
+exports.updateInvoice = async (id, updateData) => {
+  const invoice = await invoiceRepository.findOne({ where: { id } });
 
   if (!invoice) {
     throw new AppError("No invoice found with that ID", 404);
@@ -45,13 +42,11 @@ exports.updateInvoice = catchAsync(async (id, updateData) => {
 
   Object.assign(invoice, updateData);
   return await invoiceRepository.save(invoice);
-});
+};
 
 // Delete invoice
-exports.deleteInvoice = catchAsync(async (id) => {
-  const invoice = await invoiceRepository.findOne({
-    where: { id },
-  });
+exports.deleteInvoice = async (id) => {
+  const invoice = await invoiceRepository.findOne({ where: { id } });
 
   if (!invoice) {
     throw new AppError("No invoice found with that ID", 404);
@@ -59,28 +54,28 @@ exports.deleteInvoice = catchAsync(async (id) => {
 
   await invoiceRepository.remove(invoice);
   return invoice;
-});
+};
 
 // Get invoices by user ID
-exports.getInvoicesByUser = catchAsync(async (userId) => {
+exports.getInvoicesByUser = async (userId) => {
   const invoices = await invoiceRepository.find({
     where: { userId },
     relations: ["cart", "user", "seller"],
   });
-  return invoices;
-});
+  return invoices || [];
+};
 
 // Get invoices by seller ID
-exports.getInvoicesBySeller = catchAsync(async (sellerId) => {
+exports.getInvoicesBySeller = async (sellerId) => {
   const invoices = await invoiceRepository.find({
     where: { sellerId },
     relations: ["cart", "user", "seller"],
   });
-  return invoices;
-});
+  return invoices || [];
+};
 
 // Get invoice by cart ID
-exports.getInvoiceByCart = catchAsync(async (cartId) => {
+exports.getInvoiceByCart = async (cartId) => {
   const invoice = await invoiceRepository.findOne({
     where: { cartId },
     relations: ["cart", "user", "seller"],
@@ -89,11 +84,21 @@ exports.getInvoiceByCart = catchAsync(async (cartId) => {
   if (!invoice) {
     throw new AppError("No invoice found for that cart", 404);
   }
+
   return invoice;
-});
+};
+
+// Get invoices by order ID
+exports.getInvoicesByOrder = async (orderId) => {
+  const invoices = await invoiceRepository.find({
+    where: { orderId },
+    relations: ["cart", "user", "seller"],
+  });
+  return invoices || [];
+};
 
 // Update invoice payment status
-exports.updatePaymentStatus = catchAsync(async (id, status) => {
+exports.updateInvoicePaymentStatus = async (id, status) => {
   const invoice = await invoiceRepository.findOne({
     where: { id },
     relations: ["cart", "user", "seller"],
@@ -107,6 +112,6 @@ exports.updatePaymentStatus = catchAsync(async (id, status) => {
   if (status === "PAID") {
     invoice.paymentDate = new Date();
   }
-  await invoiceRepository.save(invoice);
-  return invoice;
-});
+
+  return await invoiceRepository.save(invoice);
+};

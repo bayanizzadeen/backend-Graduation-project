@@ -1,56 +1,53 @@
-const CommentReply = require("../entities");
+const { AppDataSource } = require("../config/database");
+const CommentReply = require("../entities/CommentReply");
 const AppError = require("../utils/AppError");
-const catchAsync = require("../utils/catchAsync");
+
+// Get the repository
+const commentReplyRepository = AppDataSource.getRepository(CommentReply);
 
 // Create a new comment reply
-exports.createCommentReply = catchAsync(async (replyData) => {
-  const reply = await CommentReply.create(replyData);
+exports.createCommentReply = async (replyData) => {
+  const reply = commentReplyRepository.create(replyData);
+  await commentReplyRepository.save(reply);
   return reply;
-});
+};
 
 // Get all comment replies
-exports.getAllCommentReplies = catchAsync(async () => {
-  const replies = await CommentReply.find();
+exports.getAllCommentReplies = async () => {
+  const replies = await commentReplyRepository.find();
   return replies;
-});
+};
 
 // Get comment reply by ID
-exports.getCommentReply = catchAsync(async (id) => {
-  const reply = await CommentReply.findById(id);
-  if (!reply) {
-    throw new AppError("No comment reply found with that ID", 404);
-  }
+exports.getCommentReply = async (id) => {
+  const reply = await commentReplyRepository.findOne({ where: { id } });
+  if (!reply) throw new AppError("No comment reply found with that ID", 404);
   return reply;
-});
+};
 
 // Update comment reply
-exports.updateCommentReply = catchAsync(async (id, updateData) => {
-  const reply = await CommentReply.findByIdAndUpdate(id, updateData, {
-    new: true,
-    runValidators: true,
-  });
-  if (!reply) {
-    throw new AppError("No comment reply found with that ID", 404);
-  }
+exports.updateCommentReply = async (id, updateData) => {
+  const reply = await commentReplyRepository.preload({ id, ...updateData });
+  if (!reply) throw new AppError("No comment reply found with that ID", 404);
+  await commentReplyRepository.save(reply);
   return reply;
-});
+};
 
 // Delete comment reply
-exports.deleteCommentReply = catchAsync(async (id) => {
-  const reply = await CommentReply.findByIdAndDelete(id);
-  if (!reply) {
+exports.deleteCommentReply = async (id) => {
+  const result = await commentReplyRepository.delete(id);
+  if (result.affected === 0)
     throw new AppError("No comment reply found with that ID", 404);
-  }
-});
+};
 
 // Get replies by comment ID
-exports.getRepliesByComment = catchAsync(async (commentId) => {
-  const replies = await CommentReply.find({ commentId });
-  return replies;
-});
+exports.getRepliesByComment = async (commentId) => {
+  return await commentReplyRepository.find({
+    where: { comment: { id: commentId } },
+  });
+};
 
 // Get replies by user ID
-exports.getRepliesByUser = catchAsync(async (userId) => {
-  const replies = await CommentReply.find({ userId });
-  return replies;
-});
+exports.getRepliesByUser = async (userId) => {
+  return await commentReplyRepository.find({ where: { user: { id: userId } } });
+};

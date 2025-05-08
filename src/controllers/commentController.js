@@ -1,6 +1,6 @@
 const commentService = require("../services/commentService");
 const catchAsync = require("../utils/catchAsync");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 
 /**
  * @swagger
@@ -46,10 +46,11 @@ exports.createComment = catchAsync(async (req, res) => {
  */
 exports.getAllComments = catchAsync(async (req, res) => {
   const comments = await commentService.getAllComments();
+  const safeComments = Array.isArray(comments) ? comments : [];
   res.status(200).json({
     status: "success",
-    results: comments.length,
-    data: comments,
+    results: safeComments.length,
+    data: safeComments,
   });
 });
 
@@ -157,10 +158,11 @@ exports.getCommentsByProduct = catchAsync(async (req, res) => {
   const comments = await commentService.getCommentsByProduct(
     req.params.productId
   );
+  const safeComments = Array.isArray(comments) ? comments : [];
   res.status(200).json({
     status: "success",
-    results: comments.length,
-    data: comments,
+    results: safeComments.length,
+    data: safeComments,
   });
 });
 
@@ -182,10 +184,11 @@ exports.getCommentsByProduct = catchAsync(async (req, res) => {
  */
 exports.getCommentsByUser = catchAsync(async (req, res) => {
   const comments = await commentService.getCommentsByUser(req.params.userId);
+  const safeComments = Array.isArray(comments) ? comments : [];
   res.status(200).json({
     status: "success",
-    results: comments.length,
-    data: comments,
+    results: safeComments.length,
+    data: safeComments,
   });
 });
 

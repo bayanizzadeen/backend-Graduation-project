@@ -1,5 +1,5 @@
 const { AppDataSource } = require("../config/database");
-const Store = require("../entities");
+const Store = require("../entities/Store");
 const AppError = require("../utils/AppError");
 
 const storeRepository = AppDataSource.getRepository(Store);
@@ -20,9 +20,11 @@ exports.getStoreById = async (id) => {
     where: { id },
     relations: ["products"],
   });
+
   if (!store) {
-    throw new AppError("Store not found", 404);
+    throw new AppError(`Store with id ${id} not found`, 404);
   }
+
   return store;
 };
 
@@ -31,9 +33,11 @@ exports.updateStore = async (id, storeData) => {
     where: { id },
     relations: ["products"],
   });
+
   if (!store) {
-    throw new AppError("Store not found", 404);
+    throw new AppError(`Store with id ${id} not found`, 404);
   }
+
   Object.assign(store, storeData);
   return await storeRepository.save(store);
 };
